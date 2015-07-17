@@ -1,8 +1,16 @@
-{% set jenkins = salt['grains.filter_by']({
-    'default': {
-        'user': 'jenkins',
-        'group': 'jenkins',
-        'home': '/var/lib/jenkins',
-        'port': '80',
+{% set jenkins = salt['pillar.get']('jenkins', {
+  'lookup': salt['grains.filter_by']({
+    'Debian': {
+      'humanname': 'Jenkins upstream package repository',
+      'name': 'deb http://pkg.jenkins-ci.org/debian binary/',
+      'key_url': 'http://pkg.jenkins-ci.org/debian/jenkins-ci.org.key'
     },
-}, merge=salt['pillar.get']('jenkins:lookup')) %}
+  }, default='Debian'),
+
+  'config': {
+    'port': '8080',
+    'user': 'jenkins',
+    'group': 'jenkins',
+    'home': '/var/lib/jenkins'
+  },
+}, merge=True) %}
